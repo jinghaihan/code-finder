@@ -1,0 +1,88 @@
+{
+  "name": "code-finder",
+  "type": "module",
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.18.3",
+  "description": "CLI to detect codespaces and update IDE opened histories.",
+  "author": "jinghaihan",
+  "license": "MIT",
+  "homepage": "https://github.com/jinghaihan/code-finder#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jinghaihan/code-finder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jinghaihan/code-finder/issues"
+  },
+  "keywords": [
+    "repository",
+    "repos",
+    "code",
+    "history",
+    "recent",
+    "vscode",
+    "cursor",
+    "windsurf"
+  ],
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./cli": "./dist/cli.mjs",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "bin": {
+    "code-finder": "./bin/code-finder.mjs"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
+  "scripts": {
+    "start": "tsx ./src/cli.ts",
+    "build": "unbuild",
+    "deps": "taze major -I",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "release": "bumpp",
+    "bootstrap": "pnpm install",
+    "prepare": "npx simple-git-hooks",
+    "prepublishOnly": "pnpm build"
+  },
+  "peerDependencies": {
+    "better-sqlite3": "catalog:database"
+  },
+  "dependencies": {
+    "@antfu/install-pkg": "catalog:node",
+    "@clack/prompts": "catalog:node",
+    "ansis": "catalog:node",
+    "cac": "catalog:node",
+    "local-pkg": "catalog:node",
+    "pathe": "catalog:node",
+    "tinyglobby": "catalog:node"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:lint",
+    "@antfu/utils": "catalog:utils",
+    "@types/better-sqlite3": "catalog:types",
+    "@types/node": "catalog:types",
+    "bumpp": "catalog:cli",
+    "eslint": "catalog:lint",
+    "lint-staged": "catalog:lint",
+    "pncat": "catalog:cli",
+    "simple-git-hooks": "catalog:lint",
+    "taze": "catalog:cli",
+    "tsx": "catalog:script",
+    "typescript": "catalog:tsc",
+    "unbuild": "catalog:build",
+    "vitest": "catalog:test"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
+  }
+}
