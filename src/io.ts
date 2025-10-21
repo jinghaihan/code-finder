@@ -1,7 +1,7 @@
 import type { HistoryEntry } from './types'
 import { existsSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
-import { join } from 'pathe'
+import { basename, join } from 'pathe'
 import { glob } from 'tinyglobby'
 import { CODESPACE_DIRECTORIES, CODESPACE_FILES } from './constants'
 
@@ -9,10 +9,15 @@ export async function readDirectories(path: string) {
   return await glob('*/', { cwd: path, dot: true, onlyDirectories: true, absolute: true })
 }
 
+export function cleanDir(path: string) {
+  return basename(path)
+}
+
 export async function isCodeDir(path: string): Promise<boolean | string[]> {
   const dirs = await readDirectories(path)
+  const cleanDirs = dirs.map(cleanDir)
 
-  const hasDir = CODESPACE_DIRECTORIES.find(dir => dirs.includes(dir))
+  const hasDir = CODESPACE_DIRECTORIES.find(dir => cleanDirs.includes(dir))
   if (hasDir)
     return true
 
