@@ -6,7 +6,7 @@ import { glob } from 'tinyglobby'
 import { CODESPACE_DIRECTORIES, CODESPACE_FILES } from './constants'
 
 export async function readDirectories(path: string) {
-  return await glob('*/', { cwd: path, onlyDirectories: true, absolute: true })
+  return await glob('*/', { cwd: path, dot: true, onlyDirectories: true, absolute: true })
 }
 
 export async function isCodeDir(path: string): Promise<boolean | string[]> {

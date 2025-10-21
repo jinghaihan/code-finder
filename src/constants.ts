@@ -11,6 +11,13 @@ export const IDE_DIRECTORIES = [
   '.idea',
 ]
 
+export const WORKSPACE_FILES = [
+  '.gitignore',
+  'README.md',
+  'LICENSE',
+  'LICENSE.md',
+]
+
 export const CONFIG_FILES = [
   'package.json',
   'pom.xml',
@@ -25,6 +32,7 @@ export const CODESPACE_DIRECTORIES = [
 ]
 
 export const CODESPACE_FILES = [
+  ...WORKSPACE_FILES,
   ...CONFIG_FILES,
 ]
 
