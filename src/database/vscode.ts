@@ -58,7 +58,7 @@ async function readDatabase(codeName: CodeName) {
   const ideName = CODE_NAME_MAP[codeName]
 
   const spinner = p.spinner()
-  spinner.start(`Reading ${ideName} history`)
+  spinner.start(`Reading ${ideName} histories`)
 
   let db: Database | null = null
   try {
@@ -79,11 +79,11 @@ async function readDatabase(codeName: CodeName) {
     }
   }
   catch {
-    spinner.stop(c.red`Failed to read ${ideName} history`)
+    spinner.stop(c.red`Failed to read ${ideName} histories`)
   }
   finally {
     db?.close()
-    spinner.stop(c.green`Read ${ideName} history`)
+    spinner.stop(`Read ${ideName} histories`)
   }
 }
 
@@ -95,13 +95,13 @@ async function writeDatabase(codeName: CodeName, data: History) {
   const ideName = CODE_NAME_MAP[codeName]
 
   const spinner = p.spinner()
-  spinner.start(`Updating ${ideName} history`)
+  spinner.start(`Updating ${ideName} histories`)
 
   let db: Database | null = null
   try {
     if (await hasSqlite3()) {
-      const history = JSON.stringify(data)
-      const sql = `${WRITE_SQL.replace('?', `'${history.replace(/'/g, '\'\'')}'`)}`
+      const histories = JSON.stringify(data)
+      const sql = `${WRITE_SQL.replace('?', `'${histories.replace(/'/g, '\'\'')}'`)}`
       await execFileAsync('sqlite3', [dbPath, sql])
     }
     else {
@@ -112,11 +112,11 @@ async function writeDatabase(codeName: CodeName, data: History) {
     }
   }
   catch {
-    spinner.stop(c.red`Failed to update ${ideName} history`)
+    spinner.stop(c.red`Failed to update ${ideName} histories`)
   }
   finally {
     db?.close()
-    spinner.stop(c.green`Updated ${ideName} history`)
+    spinner.stop(`Updated ${ideName} histories`)
   }
 }
 

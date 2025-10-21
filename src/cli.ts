@@ -37,12 +37,18 @@ try {
       }
 
       const config = resolveConfig(options)
-      const codespace = await detectCodespaces(config.path, config.ignorePaths)
-      for (const ide of config.ide) {
-        if (CODE_NAME_CHOICES.includes(ide)) {
-          await updateVSCodeHistories(ide, codespace, config.overwrite)
-        }
+      const codespaces = await detectCodespaces(config.path, config.ignorePaths)
+      if (!codespaces.length) {
+        p.outro(c.yellow`No codespaces found`)
+        process.exit(0)
       }
+
+      for (const ide of config.ide) {
+        if (CODE_NAME_CHOICES.includes(ide))
+          await updateVSCodeHistories(ide, codespaces, config.overwrite)
+      }
+
+      p.outro(c.green`Update completed`)
     })
 
   cli.help()
