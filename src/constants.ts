@@ -24,7 +24,7 @@ export const CONFIG_FILES = [
   'go.mod',
 ]
 
-export const IGNORE_DIRECTORIES = ['node_modules']
+export const IGNORE_DIRECTORIES = ['**/node_modules/**']
 
 export const CODESPACE_DIRECTORIES = [
   ...VERSION_CONTROL_DIRECTORIES,

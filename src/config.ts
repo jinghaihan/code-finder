@@ -1,11 +1,11 @@
-import type { CommandOptions } from './types'
+import type { CommandOptions, Options } from './types'
 import process from 'node:process'
 import * as p from '@clack/prompts'
 import c from 'ansis'
 import { CODE_NAME_CHOICES } from './constants'
 
-export function resolveConfig(options: CommandOptions): Required<CommandOptions> {
-  const { path, ide = CODE_NAME_CHOICES, overwrite = true } = options
+export function resolveConfig(options: CommandOptions): Options {
+  const { path, ide = CODE_NAME_CHOICES, overwrite = true, ignorePaths = [] } = options
 
   if (!path) {
     p.outro(c.red`--path is required`)
@@ -16,5 +16,10 @@ export function resolveConfig(options: CommandOptions): Required<CommandOptions>
     process.exit(1)
   }
 
-  return { path, ide, overwrite } as Required<CommandOptions>
+  return {
+    path,
+    ide,
+    overwrite,
+    ignorePaths: Array.isArray(ignorePaths) ? ignorePaths : [ignorePaths],
+  } as Options
 }

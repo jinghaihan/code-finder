@@ -20,6 +20,7 @@ try {
     .option('--path <path>', 'The path to be detected')
     .option('--ide <ide>', 'The IDE to be updated')
     .option('--overwrite', 'Overwrite the existing opened histories')
+    .option('--ignore-paths <paths...>', 'Ignore the directories')
     .action(async (options: CommandOptions) => {
       p.intro(`${c.yellow`${pkgJson.name} `}${c.dim`v${pkgJson.version}`}`)
 
@@ -36,7 +37,7 @@ try {
       }
 
       const config = resolveConfig(options)
-      const codespace = await detectCodespace(config.path)
+      const codespace = await detectCodespace(config.path, config.ignorePaths)
       for (const ide of config.ide) {
         if (CODE_NAME_CHOICES.includes(ide)) {
           await updateVSCodeHistory(ide, codespace, config.overwrite)

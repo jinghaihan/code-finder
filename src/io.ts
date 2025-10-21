@@ -3,18 +3,27 @@ import { existsSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 import { basename, join } from 'pathe'
 import { glob } from 'tinyglobby'
-import { CODESPACE_DIRECTORIES, CODESPACE_FILES } from './constants'
+import { CODESPACE_DIRECTORIES, CODESPACE_FILES, IGNORE_DIRECTORIES } from './constants'
 
-export async function readDirectories(path: string) {
-  return await glob('*/', { cwd: path, dot: true, onlyDirectories: true, absolute: true })
+export async function readDirectories(path: string, ignorePaths: string[]) {
+  return await glob('*/', {
+    cwd: path,
+    dot: true,
+    onlyDirectories: true,
+    absolute: true,
+    ignore: [
+      ...IGNORE_DIRECTORIES,
+      ...ignorePaths,
+    ],
+  })
 }
 
 export function cleanDir(path: string) {
   return basename(path)
 }
 
-export async function isCodeDir(path: string): Promise<boolean | string[]> {
-  const dirs = await readDirectories(path)
+export async function isCodeDir(path: string, ignorePaths: string[]): Promise<boolean | string[]> {
+  const dirs = await readDirectories(path, ignorePaths)
   const cleanDirs = dirs.map(cleanDir)
 
   const hasDir = CODESPACE_DIRECTORIES.find(dir => cleanDirs.includes(dir))
@@ -28,10 +37,10 @@ export async function isCodeDir(path: string): Promise<boolean | string[]> {
   return dirs
 }
 
-export async function detectCodespace(path: string): Promise<HistoryEntry[]> {
+export async function detectCodespace(path: string, ignorePaths: string[] = []): Promise<HistoryEntry[]> {
   const entries: HistoryEntry[] = []
 
-  const res = await isCodeDir(path)
+  const res = await isCodeDir(path, ignorePaths)
   if (typeof res === 'boolean') {
     const fileURL = pathToFileURL(path)
     entries.push({
@@ -41,7 +50,7 @@ export async function detectCodespace(path: string): Promise<HistoryEntry[]> {
   }
 
   for (const dir of res) {
-    const space = await detectCodespace(dir)
+    const space = await detectCodespace(dir, ignorePaths)
     entries.push(...space)
   }
 

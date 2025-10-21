@@ -6,6 +6,11 @@ export interface CommandOptions {
   path?: string
   overwrite?: boolean
   ide?: CodeName[]
+  ignorePaths?: string | string[]
+}
+
+export interface Options extends Required<Omit<CommandOptions, 'ignorePaths'>> {
+  ignorePaths: string[]
 }
 
 export interface History {
