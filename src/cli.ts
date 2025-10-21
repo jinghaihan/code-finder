@@ -8,9 +8,9 @@ import { isPackageExists } from 'local-pkg'
 import pkgJson from '../package.json'
 import { resolveConfig } from './config'
 import { CODE_NAME_CHOICES } from './constants'
-import { updateVSCodeHistory } from './database/vscode'
+import { updateVSCodeHistories } from './database/vscode'
 import { hasSqlite3 } from './env'
-import { detectCodespace } from './io'
+import { detectCodespaces } from './io'
 
 try {
   const cli: CAC = cac(pkgJson.name)
@@ -37,10 +37,10 @@ try {
       }
 
       const config = resolveConfig(options)
-      const codespace = await detectCodespace(config.path, config.ignorePaths)
+      const codespace = await detectCodespaces(config.path, config.ignorePaths)
       for (const ide of config.ide) {
         if (CODE_NAME_CHOICES.includes(ide)) {
-          await updateVSCodeHistory(ide, codespace, config.overwrite)
+          await updateVSCodeHistories(ide, codespace, config.overwrite)
         }
       }
     })

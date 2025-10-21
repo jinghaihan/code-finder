@@ -10,9 +10,9 @@ import { CODE_NAME_MAP } from '../constants'
 import { hasSqlite3 } from '../env'
 import { execFileAsync } from '../utils'
 
-const READ_HISTORY_SQL = 'SELECT value FROM ItemTable WHERE key = \'history.recentlyOpenedPathsList\''
+const READ_SQL = 'SELECT value FROM ItemTable WHERE key = \'history.recentlyOpenedPathsList\''
 
-const UPDATE_HISTORY_SQL = 'INSERT OR REPLACE INTO ItemTable (key, value) VALUES (\'history.recentlyOpenedPathsList\', ?)'
+const WRITE_SQL = 'INSERT OR REPLACE INTO ItemTable (key, value) VALUES (\'history.recentlyOpenedPathsList\', ?)'
 
 function detectDatabasePaths(codeName: string, path: string) {
   switch (platform()) {
@@ -63,7 +63,7 @@ async function readDatabase(codeName: CodeName) {
   let db: Database | null = null
   try {
     if (await hasSqlite3()) {
-      const { stdout } = await execFileAsync('sqlite3', [dbPath, READ_HISTORY_SQL])
+      const { stdout } = await execFileAsync('sqlite3', [dbPath, READ_SQL])
       const result = stdout.trim()
       if (!result)
         return
@@ -72,14 +72,13 @@ async function readDatabase(codeName: CodeName) {
     else {
       const Sqlite3 = (await import('better-sqlite3')).default
       db = new Sqlite3(dbPath, { readonly: true })
-      const result = db.prepare(READ_HISTORY_SQL).get() as { value: string }
+      const result = db.prepare(READ_SQL).get() as { value: string }
       if (!result)
         return
       return JSON.parse(result.value) as History
     }
   }
   catch {
-    // ignore error
     spinner.stop(c.red`Failed to read ${ideName} history`)
   }
   finally {
@@ -102,18 +101,17 @@ async function writeDatabase(codeName: CodeName, data: History) {
   try {
     if (await hasSqlite3()) {
       const history = JSON.stringify(data)
-      const sql = `${UPDATE_HISTORY_SQL.replace('?', `'${history.replace(/'/g, '\'\'')}'`)}`
+      const sql = `${WRITE_SQL.replace('?', `'${history.replace(/'/g, '\'\'')}'`)}`
       await execFileAsync('sqlite3', [dbPath, sql])
     }
     else {
       const DB = (await import('better-sqlite3')).default
       db = new DB(dbPath)
-      const stmt = db.prepare(UPDATE_HISTORY_SQL)
+      const stmt = db.prepare(WRITE_SQL)
       stmt.run(JSON.stringify(data))
     }
   }
   catch {
-    // ignore error
     spinner.stop(c.red`Failed to update ${ideName} history`)
   }
   finally {
@@ -122,38 +120,38 @@ async function writeDatabase(codeName: CodeName, data: History) {
   }
 }
 
-export async function updateVSCodeHistory(codeName: CodeName, entries: HistoryEntry[], overwrite: boolean = true) {
+export async function updateVSCodeHistories(codeName: CodeName, entries: HistoryEntry[], overwrite: boolean = true) {
   const data: History = { entries }
   if (overwrite) {
     await writeDatabase(codeName, data)
+    return
   }
-  else {
-    const histories = await readDatabase(codeName)
-    if (!histories) {
-      await writeDatabase(codeName, data)
-      return
-    }
 
-    const uri = new Set<string>()
-    await writeDatabase(codeName, {
-      entries: [...(histories?.entries ?? []), ...(data.entries ?? [])].filter((entry) => {
-        if (entry.folderUri) {
-          if (!existsSync(entry.folderUri))
-            return false
-
-          if (!uri.has(entry.folderUri))
-            uri.add(entry.folderUri)
-          else
-            return false
-        }
-        if (entry.fileUri) {
-          if (!existsSync(entry.fileUri))
-            return false
-          else
-            return true
-        }
-        return true
-      }),
-    })
+  const histories = await readDatabase(codeName)
+  if (!histories) {
+    await writeDatabase(codeName, data)
+    return
   }
+
+  const uri = new Set<string>()
+  await writeDatabase(codeName, {
+    entries: [...(histories?.entries ?? []), ...(data.entries ?? [])].filter((entry) => {
+      if (entry.folderUri) {
+        if (!existsSync(entry.folderUri))
+          return false
+
+        if (!uri.has(entry.folderUri))
+          uri.add(entry.folderUri)
+        else
+          return false
+      }
+      if (entry.fileUri) {
+        if (!existsSync(entry.fileUri))
+          return false
+        else
+          return true
+      }
+      return true
+    }),
+  })
 }
