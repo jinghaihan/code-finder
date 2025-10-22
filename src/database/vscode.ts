@@ -6,7 +6,7 @@ import process from 'node:process'
 import * as p from '@clack/prompts'
 import c from 'ansis'
 import { join } from 'pathe'
-import { CODE_NAME_MAP } from '../constants'
+import { EDITOR_NAME_MAP } from '../constants'
 import { execFileAsync, hasSqlite3 } from '../utils'
 
 const READ_SQL = 'SELECT value FROM ItemTable WHERE key = \'history.recentlyOpenedPathsList\''
@@ -54,10 +54,10 @@ async function readDatabase(codeName: CodeName) {
   if (!dbPath)
     return
 
-  const ideName = CODE_NAME_MAP[codeName]
+  const editor = EDITOR_NAME_MAP[codeName]
 
   const spinner = p.spinner()
-  spinner.start(`Reading ${ideName} histories`)
+  spinner.start(`Reading ${editor}`)
 
   let db: Database | null = null
   try {
@@ -78,11 +78,11 @@ async function readDatabase(codeName: CodeName) {
     }
   }
   catch {
-    spinner.stop(c.red`Failed to read ${ideName} histories`)
+    spinner.stop(c.red`Failed to read ${editor}`)
   }
   finally {
     db?.close()
-    spinner.stop(`Read ${ideName} histories`)
+    spinner.stop(`Read ${editor}`)
   }
 }
 
@@ -91,10 +91,10 @@ async function writeDatabase(codeName: CodeName, data: History) {
   if (!dbPath)
     return
 
-  const ideName = CODE_NAME_MAP[codeName]
+  const editor = EDITOR_NAME_MAP[codeName]
 
   const spinner = p.spinner()
-  spinner.start(`Updating ${ideName} histories`)
+  spinner.start(`Updating ${editor}`)
 
   let db: Database | null = null
   try {
@@ -111,11 +111,11 @@ async function writeDatabase(codeName: CodeName, data: History) {
     }
   }
   catch {
-    spinner.stop(c.red`Failed to update ${ideName} histories`)
+    spinner.stop(c.red`Failed to update ${editor}`)
   }
   finally {
     db?.close()
-    spinner.stop(`Updated ${ideName} histories`)
+    spinner.stop(`Updated ${editor}`)
   }
 }
 
@@ -154,3 +154,9 @@ export async function updateVSCodeHistories(codeName: CodeName, entries: History
     }),
   })
 }
+
+export const vscode = {
+  readDatabase,
+  writeDatabase,
+  updateHistories: updateVSCodeHistories,
+} as const

@@ -5,7 +5,7 @@ import { basename, join } from 'pathe'
 import { glob } from 'tinyglobby'
 import { CODESPACE_DIRECTORIES, CODESPACE_FILES, IGNORE_DIRECTORIES } from './constants'
 
-export async function readDirs(path: string, ignorePaths: string[]) {
+async function readDirs(path: string, ignorePaths: string[]) {
   return await glob('*/', {
     cwd: path,
     dot: true,
@@ -18,7 +18,7 @@ export async function readDirs(path: string, ignorePaths: string[]) {
   })
 }
 
-export async function isCodeDir(path: string, ignorePaths: string[]): Promise<boolean | string[]> {
+export async function isCodespace(path: string, ignorePaths: string[]): Promise<boolean | string[]> {
   const dirs = await readDirs(path, ignorePaths)
   const cleanDirs = dirs.map(dir => basename(dir))
 
@@ -36,7 +36,7 @@ export async function isCodeDir(path: string, ignorePaths: string[]): Promise<bo
 export async function detectCodespaces(path: string, ignorePaths: string[] = []): Promise<HistoryEntry[]> {
   const entries: HistoryEntry[] = []
 
-  const res = await isCodeDir(path, ignorePaths)
+  const res = await isCodespace(path, ignorePaths)
   if (typeof res === 'boolean') {
     const fileURL = pathToFileURL(path)
     entries.push({

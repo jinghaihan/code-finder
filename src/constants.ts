@@ -63,12 +63,10 @@ export const CODE_NAME_CHOICES = [
 ] as const
 
 export const EDITOR_NAME_MAP = {
-  'vscode': 'Code',
-  'vscode-insiders': 'Code - Insiders',
-  'vscodium': 'VSCodium',
-  'vscodium-insiders': 'VSCodium - Insiders',
-  'cursor': 'Cursor',
-  'windsurf': 'Windsurf',
+  'Code': 'Visual Studio Code',
+  'Code - Insiders': 'Visual Studio Code - Insiders',
+  'VSCodium': 'VSCodium',
+  'VSCodium - Insiders': 'VSCodium - Insiders',
+  'Cursor': 'Cursor',
+  'Windsurf': 'Windsurf',
 } as const
-
-export const CODE_NAME_MAP = Object.fromEntries(Object.entries(EDITOR_NAME_MAP).map(([key, value]) => [value, key]))
