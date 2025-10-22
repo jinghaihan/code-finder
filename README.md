@@ -1,15 +1,17 @@
-# <samp><b>code-finder</b></samp>
+# code-finder
 
 [![npm version][npm-version-src]][npm-version-href]
 [![bundle][bundle-src]][bundle-href]
 [![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
 
+CLI to detect codespaces and update IDE opened histories.
+
 <p align='center'>
 <img src='./assets/help.png' width='600' />
 </p>
 
-## <samp><b>Usage</b></samp>
+## Usage
 
 ```sh
 npx code-finder --path <path> --ide <ide> [--overwrite]
@@ -19,7 +21,7 @@ npx code-finder --path <path> --ide <ide> [--overwrite]
 - `--ide <ide>` - The IDE to update history for (optional, can be used multiple times, defaults to VSCode and its forks)
 - `--overwrite` - Overwrite existing opened histories (optional, defaults to true)
 
-## <samp><b>License</b></samp>
+## License
 
 [MIT](./LICENSE) License © [jinghaihan](https://github.com/jinghaihan)
 

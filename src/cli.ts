@@ -4,13 +4,12 @@ import process from 'node:process'
 import * as p from '@clack/prompts'
 import c from 'ansis'
 import { cac } from 'cac'
-import { isPackageExists } from 'local-pkg'
 import pkgJson from '../package.json'
 import { resolveConfig } from './config'
 import { CODE_NAME_CHOICES } from './constants'
 import { updateVSCodeHistories } from './database/vscode'
-import { hasSqlite3 } from './env'
-import { detectCodespaces } from './io'
+import { detectCodespaces } from './detect'
+import { ensureSqlite3 } from './utils'
 
 try {
   const cli: CAC = cac(pkgJson.name)
@@ -23,18 +22,7 @@ try {
     .option('--ignore-paths <paths...>', 'Ignore the directories')
     .action(async (options: CommandOptions) => {
       p.intro(`${c.yellow`${pkgJson.name} `}${c.dim`v${pkgJson.version}`}`)
-
-      if (!await hasSqlite3()) {
-        if (!isPackageExists('better-sqlite3')) {
-          const spinner = p.spinner()
-          spinner.start('Installing better-sqlite3')
-
-          const { installPackage } = await import('@antfu/install-pkg')
-          await installPackage('better-sqlite3', { silent: true })
-
-          spinner.stop(c.green`Installed better-sqlite3`)
-        }
-      }
+      await ensureSqlite3()
 
       const config = resolveConfig(options)
       const codespaces = await detectCodespaces(config.path, config.ignorePaths)

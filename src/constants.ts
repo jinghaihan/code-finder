@@ -11,6 +11,10 @@ export const IDE_DIRECTORIES = [
   '.idea',
 ]
 
+export const INSTALL_DIRECTORIES = [
+  'node_modules',
+]
+
 export const WORKSPACE_FILES = [
   '.gitignore',
   'README.md',
@@ -24,16 +28,29 @@ export const CONFIG_FILES = [
   'go.mod',
 ]
 
+export const LOCK_FILES = [
+  'npm-shrinkwrap.json',
+  'package-lock.json',
+  'pnpm-lock.yaml',
+  'pnpm-workspace.yaml',
+  'yarn.lock',
+  'deno.lock',
+  'bun.lock',
+  'bun.lockb',
+]
+
 export const IGNORE_DIRECTORIES = ['**/node_modules/**']
 
 export const CODESPACE_DIRECTORIES = [
   ...VERSION_CONTROL_DIRECTORIES,
   ...IDE_DIRECTORIES,
+  ...INSTALL_DIRECTORIES,
 ]
 
 export const CODESPACE_FILES = [
   ...WORKSPACE_FILES,
   ...CONFIG_FILES,
+  ...LOCK_FILES,
 ]
 
 export const CODE_NAME_CHOICES = [

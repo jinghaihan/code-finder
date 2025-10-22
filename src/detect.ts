@@ -18,13 +18,9 @@ export async function readDirs(path: string, ignorePaths: string[]) {
   })
 }
 
-export function cleanDir(path: string) {
-  return basename(path)
-}
-
 export async function isCodeDir(path: string, ignorePaths: string[]): Promise<boolean | string[]> {
   const dirs = await readDirs(path, ignorePaths)
-  const cleanDirs = dirs.map(cleanDir)
+  const cleanDirs = dirs.map(dir => basename(dir))
 
   const hasDir = CODESPACE_DIRECTORIES.find(dir => cleanDirs.includes(dir))
   if (hasDir)

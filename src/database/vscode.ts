@@ -7,8 +7,7 @@ import * as p from '@clack/prompts'
 import c from 'ansis'
 import { join } from 'pathe'
 import { CODE_NAME_MAP } from '../constants'
-import { hasSqlite3 } from '../env'
-import { execFileAsync } from '../utils'
+import { execFileAsync, hasSqlite3 } from '../utils'
 
 const READ_SQL = 'SELECT value FROM ItemTable WHERE key = \'history.recentlyOpenedPathsList\''
 
