@@ -4,14 +4,14 @@ catalogs:
     unbuild: ^3.6.1
   cli:
     bumpp: ^10.3.1
-    pncat: ^0.7.3
-    taze: ^19.8.1
+    pncat: ^0.7.4
+    taze: ^19.9.0
   database:
     better-sqlite3: ^12.4.1
   lint:
-    '@antfu/eslint-config': ^6.0.0
+    '@antfu/eslint-config': ^6.1.0
     eslint: ^9.38.0
-    lint-staged: ^16.2.4
+    lint-staged: ^16.2.6
     simple-git-hooks: ^2.13.1
   node:
     '@antfu/install-pkg': ^1.1.0
@@ -20,16 +20,17 @@ catalogs:
     cac: ^6.7.14
     local-pkg: ^1.1.2
     pathe: ^2.0.3
+    tildify: ^3.0.0
     tinyglobby: ^0.2.15
   script:
     tsx: ^4.20.6
   test:
-    vitest: ^3.2.4
+    vitest: ^4.0.5
   tsc:
     typescript: ^5.9.3
   types:
     '@types/better-sqlite3': ^7.6.13
-    '@types/node': ^24.8.1
+    '@types/node': ^24.9.2
   utils:
     '@antfu/utils': ^9.3.0
 onlyBuiltDependencies:

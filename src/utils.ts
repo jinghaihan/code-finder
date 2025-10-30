@@ -1,10 +1,21 @@
 import { execFile } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
 import * as p from '@clack/prompts'
 import c from 'ansis'
 import { isPackageExists } from 'local-pkg'
 
 export const execFileAsync = promisify(execFile)
+
+export function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+export function normalizePath(path: string) {
+  if (path.startsWith('file://'))
+    return fileURLToPath(path)
+  return path
+}
 
 export async function hasSqlite3(): Promise<boolean> {
   try {
