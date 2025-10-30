@@ -1,12 +1,17 @@
-import type { CODE_NAME_CHOICES } from './constants'
+import type { CODE_NAME_CHOICES, MODE_CHOICES } from './constants'
+
+export type RangeMode = (typeof MODE_CHOICES)[number]
 
 export type CodeName = (typeof CODE_NAME_CHOICES)[number]
 
 export interface CommandOptions {
+  mode?: RangeMode
   path?: string
-  overwrite?: boolean
   ide?: CodeName[]
   ignorePaths?: string | string[]
+  gitBranch?: boolean
+  overwrite?: boolean
+  json?: boolean
 }
 
 export interface Options extends Required<Omit<CommandOptions, 'ignorePaths'>> {

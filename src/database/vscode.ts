@@ -7,13 +7,13 @@ import * as p from '@clack/prompts'
 import c from 'ansis'
 import { join } from 'pathe'
 import { EDITOR_NAME_MAP } from '../constants'
-import { execFileAsync, hasSqlite3 } from '../utils'
+import { execFileAsync, hasSqlite3, normalizePath } from '../utils'
 
 const READ_SQL = 'SELECT value FROM ItemTable WHERE key = \'history.recentlyOpenedPathsList\''
 
 const WRITE_SQL = 'INSERT OR REPLACE INTO ItemTable (key, value) VALUES (\'history.recentlyOpenedPathsList\', ?)'
 
-function detectDatabasePaths(codeName: string, path: string) {
+function detectVSCodeDatabasePaths(codeName: string, path: string) {
   switch (platform()) {
     case 'win32':
       return [
@@ -34,8 +34,8 @@ function detectDatabasePaths(codeName: string, path: string) {
   }
 }
 
-async function detectDatabase(codeName: string): Promise<string | undefined> {
-  const paths = detectDatabasePaths(codeName, join('globalStorage', 'state.vscdb'))
+async function detectVSCodeDatabase(codeName: string): Promise<string | undefined> {
+  const paths = detectVSCodeDatabasePaths(codeName, join('globalStorage', 'state.vscdb'))
   for (const path of paths) {
     try {
       if (existsSync(path)) {
@@ -49,8 +49,8 @@ async function detectDatabase(codeName: string): Promise<string | undefined> {
   return undefined
 }
 
-async function readDatabase(codeName: CodeName) {
-  const dbPath = await detectDatabase(codeName)
+async function readVSCodeDatabase(codeName: CodeName) {
+  const dbPath = await detectVSCodeDatabase(codeName)
   if (!dbPath)
     return
 
@@ -86,8 +86,8 @@ async function readDatabase(codeName: CodeName) {
   }
 }
 
-async function writeDatabase(codeName: CodeName, data: History) {
-  const dbPath = await detectDatabase(codeName)
+async function writeVSCodeDatabase(codeName: CodeName, data: History) {
+  const dbPath = await detectVSCodeDatabase(codeName)
   if (!dbPath)
     return
 
@@ -122,41 +122,58 @@ async function writeDatabase(codeName: CodeName, data: History) {
 export async function updateVSCodeHistories(codeName: CodeName, entries: HistoryEntry[], overwrite: boolean = true) {
   const data: History = { entries }
   if (overwrite) {
-    await writeDatabase(codeName, data)
+    await writeVSCodeDatabase(codeName, data)
     return
   }
+  const mergedEntries = await mergeVSCodeHistories(codeName, entries)
+  await writeVSCodeDatabase(codeName, { entries: mergedEntries })
+}
 
-  const histories = await readDatabase(codeName)
+export async function mergeVSCodeHistories(codeName: CodeName, entries: HistoryEntry[]): Promise<HistoryEntry[]> {
+  const data: History = { entries }
+  const histories = await readVSCodeDatabase(codeName)
   if (!histories) {
-    await writeDatabase(codeName, data)
-    return
+    await writeVSCodeDatabase(codeName, data)
+    return entries
   }
+  return uniqVSCodeHistories([histories?.entries ?? [], data.entries ?? []])
+}
 
+export function uniqVSCodeHistories(data: HistoryEntry[][]): HistoryEntry[] {
   const uri = new Set<string>()
-  await writeDatabase(codeName, {
-    entries: [...(histories?.entries ?? []), ...(data.entries ?? [])].filter((entry) => {
-      if (entry.folderUri) {
-        if (!existsSync(entry.folderUri))
-          return false
+  return data.flat().filter((entry) => {
+    if (entry.folderUri) {
+      if (!existsSync(normalizePath(entry.folderUri)))
+        return false
 
-        if (!uri.has(entry.folderUri))
-          uri.add(entry.folderUri)
-        else
-          return false
+      if (!uri.has(entry.folderUri)) {
+        uri.add(entry.folderUri)
+        return true
       }
-      if (entry.fileUri) {
-        if (!existsSync(entry.fileUri))
-          return false
-        else
-          return true
+      else {
+        return false
       }
-      return true
-    }),
+    }
+    if (entry.fileUri) {
+      if (!existsSync(normalizePath(entry.fileUri)))
+        return false
+
+      if (!uri.has(entry.fileUri)) {
+        uri.add(entry.fileUri)
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    return true
   })
 }
 
 export const vscode = {
-  readDatabase,
-  writeDatabase,
-  updateHistories: updateVSCodeHistories,
+  read: readVSCodeDatabase,
+  write: writeVSCodeDatabase,
+  uniq: uniqVSCodeHistories,
+  merge: mergeVSCodeHistories,
+  update: updateVSCodeHistories,
 } as const
