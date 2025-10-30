@@ -14,6 +14,10 @@ export function outputHistories(data: HistoryEntry[], json: boolean = false) {
     console.log(JSON_MARKER)
   }
   else {
-    p.note(data.map(i => `- ${i.folderUri}${i.gitBranch ? ` (${c.reset(c.yellow(i.gitBranch))})` : ''}`).join('\n'))
+    const lines = data.map((i) => {
+      const path = i.path || i.folderUri || i.fileUri
+      return `- ${path}${i.branch ? c.reset` (${c.green(i.branch)})` : ''}`
+    })
+    p.note(lines.join('\n'))
   }
 }

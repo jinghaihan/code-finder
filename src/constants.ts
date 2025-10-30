@@ -1,16 +1,16 @@
 import type { CommandOptions } from './types'
-import process from 'node:process'
 import pkgJson from '../package.json'
 
 export const NAME = pkgJson.name
-export const VERSION = process.env.NODE_ENV === 'production' ? pkgJson.version : '0.0.0'
+export const VERSION = pkgJson.version
 
 export const MODE_CHOICES = ['update', 'detect', 'combine'] as const
 
 export const DEFAULT_OPTIONS: Partial<CommandOptions> = {
   mode: 'update',
-  overwrite: true,
   ignorePaths: [],
+  overwrite: true,
+  source: false,
   tilde: false,
   gitBranch: false,
   json: false,

@@ -9,8 +9,9 @@ export type EditorName = keyof typeof EDITOR_NAME_MAP
 export interface CommandOptions {
   mode?: RangeMode
   path?: string
-  ide?: CodeName[]
   ignorePaths?: string | string[]
+  ide?: CodeName[]
+  source?: boolean
   tilde?: boolean
   gitBranch?: boolean
   overwrite?: boolean
@@ -28,6 +29,9 @@ export interface History {
 export interface HistoryEntry {
   folderUri?: string
   fileUri?: string
-  gitBranch?: string
   path?: string
+  source?: EntrySource[]
+  branch?: string
 }
+
+export type EntrySource = CodeName | 'Codespace'

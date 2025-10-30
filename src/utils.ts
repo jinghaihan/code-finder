@@ -12,8 +12,14 @@ export function capitalize(str: string): string {
 }
 
 export function normalizePath(path: string) {
-  if (path.startsWith('file://'))
-    return fileURLToPath(path)
+  if (path.startsWith('file://')) {
+    try {
+      return fileURLToPath(path)
+    }
+    catch {
+      return path
+    }
+  }
   return path
 }
 

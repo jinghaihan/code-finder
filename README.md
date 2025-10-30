@@ -8,18 +8,35 @@
 CLI to detect codespaces and update IDE opened histories.
 
 <p align='center'>
-<img src='./assets/help.png' width='600' />
+<img src='./assets/update.gif' width='600' />
 </p>
 
 ## Usage
 
 ```sh
-npx code-finder --path <path> --ide <ide> [--overwrite]
+npx code-finder [mode] [options]
 ```
 
-- `--path <path>` - The directory path to scan for codespaces (required)
-- `--ide <ide>` - The IDE to update history for (optional, can be used multiple times, defaults to VSCode and its forks)
-- `--overwrite` - Overwrite existing opened histories (optional, defaults to true)
+<p align='center'>
+<img src='./assets/help.png' />
+</p>
+
+### Modes
+
+- `update` - Update IDE opened histories with detected codespaces
+- `detect` - Detect and display codespaces without updating IDE histories
+- `combine` - Combine detected codespaces with existing IDE histories
+
+### Options
+
+- `--path <path>` - The directory path to scan for codespaces
+- `--ignore-paths <paths...>` - Ignore the specified directories during detection
+- `--ide <ide>` - The IDE to update history for (can be used multiple times, defaults to VSCode and its forks)
+- `--source` - Include the source of the histories in the output
+- `--tilde` - Convert and include the path to a tilde path format
+- `--git-branch` - Detect and include git branch information
+- `--overwrite` - Overwrite existing opened histories (defaults to true)
+- `--json` - Output the result in JSON format
 
 ## License
 
