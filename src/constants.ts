@@ -9,10 +9,11 @@ export const MODE_CHOICES = ['update', 'detect', 'combine'] as const
 export const DEFAULT_OPTIONS: Partial<CommandOptions> = {
   mode: 'update',
   ignorePaths: [],
-  overwrite: true,
-  source: false,
-  tilde: false,
+  path: false,
+  tildify: false,
   gitBranch: false,
+  source: false,
+  overwrite: true,
   json: false,
 }
 

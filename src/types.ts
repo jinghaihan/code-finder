@@ -8,12 +8,13 @@ export type EditorName = keyof typeof EDITOR_NAME_MAP
 
 export interface CommandOptions {
   mode?: RangeMode
-  path?: string
+  cwd?: string
   ignorePaths?: string | string[]
   ide?: CodeName[]
-  source?: boolean
-  tilde?: boolean
+  path?: boolean
+  tildify?: boolean
   gitBranch?: boolean
+  source?: boolean
   overwrite?: boolean
   json?: boolean
 }
