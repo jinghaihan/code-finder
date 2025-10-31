@@ -1,17 +1,12 @@
 import type { CAC } from 'cac'
-import type { CommandOptions, EntrySource, HistoryEntry, RangeMode } from './types'
+import type { CommandOptions, RangeMode } from './types'
 import process from 'node:process'
 import * as p from '@clack/prompts'
 import c from 'ansis'
 import { cac } from 'cac'
-import tildify from 'tildify'
-import { resolveConfig } from './config'
-import { CODE_NAME_CHOICES, MODE_CHOICES, NAME, VERSION } from './constants'
-import { vscode } from './database/vscode'
-import { detectCodespaces } from './detect'
-import { outputHistories } from './format'
-import { getGitBranch } from './git'
-import { capitalize, ensureSqlite3, normalizePath } from './utils'
+import { executeCommand } from './command'
+import { MODE_CHOICES, NAME, VERSION } from './constants'
+import { capitalize } from './utils'
 
 try {
   const cli: CAC = cac(NAME)
@@ -27,6 +22,7 @@ try {
     .option('--source', 'Include the source of the histories')
     .option('--overwrite', 'Overwrite the existing opened histories')
     .option('--json', 'Output the result in JSON format')
+    .option('--yes', 'Skip the confirmation')
     .action(async (mode: RangeMode, options: CommandOptions) => {
       if (mode) {
         if (!MODE_CHOICES.includes(mode)) {
@@ -37,91 +33,7 @@ try {
       }
 
       p.intro(`${c.yellow`${NAME} `}${c.dim`v${VERSION}`}`)
-      await ensureSqlite3()
-
-      const config = await resolveConfig(options)
-      const entriesRecords = new Map<string, EntrySource[]>()
-
-      const traverse = async (data: HistoryEntry[]) => {
-        if (!config.path && !config.tildify && !config.gitBranch && !config.source)
-          return
-
-        const spinner = p.spinner()
-        spinner.start('Traversing data')
-
-        for (const entry of data) {
-          const uri = (entry.folderUri || entry.fileUri)!
-          if (config.path || config.tildify)
-            entry.path = config.tildify ? tildify(normalizePath(uri)) : normalizePath(uri)
-
-          if (config.gitBranch && entry.folderUri) {
-            const branch = await getGitBranch(entry.folderUri)
-            if (branch)
-              entry.branch = branch
-          }
-
-          if (config.source)
-            entry.source = entriesRecords.get(uri) || []
-        }
-
-        spinner.stop('Traversing data completed')
-      }
-
-      const recordEntries = (entries: HistoryEntry[], source: EntrySource) => {
-        entries.forEach((entry) => {
-          const uri = (entry.folderUri || entry.fileUri)!
-          if (entriesRecords.has(uri))
-            entriesRecords.get(uri)?.push(source)
-          else
-            entriesRecords.set(uri, [source])
-        })
-      }
-
-      const codespaces = config.cwd ? await detectCodespaces(config.cwd, config.ignorePaths) : []
-      recordEntries(codespaces, 'Codespace')
-
-      const codespacesInterceptor = () => {
-        if (!codespaces.length) {
-          p.outro(c.yellow`No codespaces found`)
-          process.exit(0)
-        }
-      }
-
-      switch (config.mode) {
-        case 'update':{
-          codespacesInterceptor()
-          for (const ide of config.ide) {
-            if (CODE_NAME_CHOICES.includes(ide))
-              await vscode.update(ide, codespaces, config.overwrite)
-          }
-          break
-        }
-        case 'detect': {
-          codespacesInterceptor()
-          await traverse(codespaces)
-          outputHistories(codespaces, config.json)
-          break
-        }
-        case 'combine': {
-          const entries: HistoryEntry[][] = [codespaces]
-
-          for (const ide of config.ide) {
-            if (CODE_NAME_CHOICES.includes(ide)) {
-              const data = await vscode.read(ide)
-              if (data) {
-                entries.push(data.entries)
-                recordEntries(data.entries, ide)
-              }
-            }
-          }
-
-          const data = vscode.uniq(entries)
-          await traverse(data)
-          outputHistories(data, config.json)
-          break
-        }
-      }
-
+      const { config } = await executeCommand(options)
       p.outro(c.green`${capitalize(config.mode)} command completed`)
     })
 

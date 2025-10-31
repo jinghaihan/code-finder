@@ -15,6 +15,7 @@ export const DEFAULT_OPTIONS: Partial<CommandOptions> = {
   source: false,
   overwrite: true,
   json: false,
+  yes: false,
 }
 
 export const JSON_MARKER = '<!-- code-finder -->'

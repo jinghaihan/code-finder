@@ -1,4 +1,6 @@
+export * from './command'
 export * from './constants'
 export * from './database/vscode'
 export * from './detect'
 export * from './types'
+export * from './utils'

@@ -17,6 +17,7 @@ export interface CommandOptions {
   source?: boolean
   overwrite?: boolean
   json?: boolean
+  yes?: boolean
 }
 
 export interface Options extends Required<Omit<CommandOptions, 'ignorePaths'>> {

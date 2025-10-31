@@ -1,9 +1,11 @@
+import type { HistoryEntry } from './types'
 import { execFile } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
 import * as p from '@clack/prompts'
 import c from 'ansis'
 import { isPackageExists } from 'local-pkg'
+import { JSON_MARKER } from './constants'
 
 export const execFileAsync = promisify(execFile)
 
@@ -44,5 +46,17 @@ export async function ensureSqlite3() {
 
       spinner.stop(c.green`Installed better-sqlite3`)
     }
+  }
+}
+
+export function extractJSON(stdout: string): HistoryEntry[] | undefined {
+  try {
+    const lines = stdout.split('\n')
+    const start = lines.findIndex(line => line.includes(JSON_MARKER))
+    const end = lines.slice(start + 1).findIndex(line => line.includes(JSON_MARKER)) + start + 1
+    return JSON.parse(lines.slice(start + 1, end).join('\n'))
+  }
+  catch {
+    // safe guard
   }
 }

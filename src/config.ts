@@ -11,7 +11,7 @@ export async function resolveConfig(options: CommandOptions): Promise<Options> {
   const { ide = CODE_NAME_CHOICES, ignorePaths = [] } = options
 
   if (options.mode === 'update' || options.mode === 'detect') {
-    if (!options.cwd) {
+    if (!options.cwd && !options.yes) {
       const result = await p.confirm({
         message: `Use ${c.yellow(tildify(process.cwd()))} as the working directory?`,
         initialValue: true,
