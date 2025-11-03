@@ -2,10 +2,10 @@ import type { HistoryEntry } from './types'
 import { existsSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 import { basename, join } from 'pathe'
-import { glob } from 'tinyglobby'
 import { CODESPACE_DIRECTORIES, CODESPACE_FILES, IGNORE_DIRECTORIES } from './constants'
 
 async function readDirs(path: string, ignorePaths: string[]) {
+  const { glob } = await import('tinyglobby')
   return await glob('*/', {
     cwd: path,
     dot: true,

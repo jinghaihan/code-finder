@@ -31,7 +31,7 @@ export async function resolveConfig(options: CommandOptions): Promise<Options> {
 
   return {
     ...options,
-    cwd: resolve(options.cwd!),
+    cwd: options.cwd ? resolve(options.cwd) : undefined,
     ide,
     ignorePaths: Array.isArray(ignorePaths) ? ignorePaths : [ignorePaths],
   } as Options
