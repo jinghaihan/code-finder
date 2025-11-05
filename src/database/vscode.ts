@@ -7,7 +7,7 @@ import * as p from '@clack/prompts'
 import c from 'ansis'
 import { join } from 'pathe'
 import { EDITOR_NAME_MAP } from '../constants'
-import { execFileAsync, hasSqlite3, normalizePath } from '../utils'
+import { execFileAsync, hasSqlite3, normalizePath, sortByMtime } from '../utils'
 
 const READ_SQL = 'SELECT value FROM ItemTable WHERE key = \'history.recentlyOpenedPathsList\''
 
@@ -141,7 +141,7 @@ export async function mergeVSCodeHistories(codeName: CodeName, entries: HistoryE
 
 export function uniqVSCodeHistories(data: HistoryEntry[][]): HistoryEntry[] {
   const uri = new Set<string>()
-  return data.flat().filter((entry) => {
+  const filtered = data.flat().filter((entry) => {
     if (entry.folderUri) {
       if (!existsSync(normalizePath(entry.folderUri)))
         return false
@@ -168,6 +168,7 @@ export function uniqVSCodeHistories(data: HistoryEntry[][]): HistoryEntry[] {
     }
     return true
   })
+  return sortByMtime(filtered)
 }
 
 export const vscode = {

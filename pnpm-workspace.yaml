@@ -33,6 +33,7 @@ catalogs:
     '@types/node': ^24.9.2
   utils:
     '@antfu/utils': ^9.3.0
+    p-limit: ^7.2.0
 onlyBuiltDependencies:
   - esbuild
   - simple-git-hooks.

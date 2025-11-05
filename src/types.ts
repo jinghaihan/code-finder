@@ -12,6 +12,8 @@ export interface CommandOptions {
   ignorePaths?: string | string[]
   ide?: CodeName[]
   path?: boolean
+  mtimeDeep?: number
+  mtimeConcurrency?: number
   tildify?: boolean
   gitBranch?: boolean
   source?: boolean
@@ -24,6 +26,8 @@ export interface Options extends Required<Omit<CommandOptions, 'ignorePaths'>> {
   ignorePaths: string[]
 }
 
+export interface DetectOptions extends Pick<Options, 'cwd' | 'ignorePaths' | 'mtimeDeep' | 'mtimeConcurrency'> {}
+
 export interface History {
   entries: HistoryEntry[]
 }
@@ -34,6 +38,7 @@ export interface HistoryEntry {
   path?: string
   source?: EntrySource[]
   branch?: string
+  mtime?: number
 }
 
 export type EntrySource = CodeName | 'Codespace'

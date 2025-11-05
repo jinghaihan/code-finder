@@ -17,6 +17,14 @@ export async function executeCommand(options: Partial<CommandOptions>): Promise<
   const config = await resolveConfig(options)
   const entriesRecords = new Map<string, EntrySource[]>()
 
+  const detect = async () => {
+    const spinner = p.spinner()
+    spinner.start('Detecting codespaces')
+    const codespaces = await detectCodespaces(config)
+    spinner.stop('Detecting codespaces completed')
+    return codespaces
+  }
+
   const traverse = async (data: HistoryEntry[]) => {
     if (!config.path && !config.tildify && !config.gitBranch && !config.source)
       return
@@ -52,7 +60,8 @@ export async function executeCommand(options: Partial<CommandOptions>): Promise<
     })
   }
 
-  const codespaces = config.cwd ? await detectCodespaces(config.cwd, config.ignorePaths) : []
+  const codespaces = config.cwd ? await detect() : []
+
   recordEntries(codespaces, 'Codespace')
 
   const codespacesInterceptor = () => {

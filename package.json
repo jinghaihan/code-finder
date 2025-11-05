@@ -60,6 +60,7 @@
     "ansis": "catalog:node",
     "cac": "catalog:node",
     "local-pkg": "catalog:node",
+    "p-limit": "catalog:utils",
     "pathe": "catalog:node",
     "tildify": "catalog:node",
     "tinyglobby": "catalog:node"

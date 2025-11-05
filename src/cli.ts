@@ -20,6 +20,8 @@ try {
     .option('--tildify', 'Convert and include the path to a tildify path')
     .option('--git-branch', 'The git branch to be detected')
     .option('--source', 'Include the source of the histories')
+    .option('--mtime-deep <deep>', 'The deep to get the codespace mtime')
+    .option('--mtime-concurrency <concurrency>', 'The concurrency to get the codespace mtime')
     .option('--overwrite', 'Overwrite the existing opened histories')
     .option('--json', 'Output the result in JSON format')
     .option('--yes', 'Skip the confirmation')

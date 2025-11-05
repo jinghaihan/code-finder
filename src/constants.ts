@@ -1,4 +1,3 @@
-import type { CommandOptions } from './types'
 import pkgJson from '../package.json'
 
 export const NAME = pkgJson.name
@@ -6,10 +5,11 @@ export const VERSION = pkgJson.version
 
 export const MODE_CHOICES = ['update', 'detect', 'combine'] as const
 
-export const DEFAULT_OPTIONS: Partial<CommandOptions> = {
-  mode: 'update',
+export const DEFAULT_OPTIONS = {
   ignorePaths: [],
   path: false,
+  mtimeDeep: 1,
+  mtimeConcurrency: 30,
   tildify: false,
   gitBranch: false,
   source: false,
@@ -62,6 +62,22 @@ export const LOCK_FILES = [
 ]
 
 export const IGNORE_DIRECTORIES = ['**/node_modules/**']
+
+export const IGNORE_FILES = [
+  'node_modules/**',
+  '.git/**',
+  '.github/**',
+  '.hg/**',
+  '.svn/**',
+  'dist/**',
+  'build/**',
+  'coverage/**',
+  '.next/**',
+  '.nuxt/**',
+  '*.log',
+  'tmp/**',
+  'temp/**',
+]
 
 export const CODESPACE_DIRECTORIES = [
   ...VERSION_CONTROL_DIRECTORIES,

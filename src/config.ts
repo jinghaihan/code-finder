@@ -31,8 +31,15 @@ export async function resolveConfig(options: CommandOptions): Promise<Options> {
 
   return {
     ...options,
+    mode: options.mode || 'update',
     cwd: options.cwd ? resolve(options.cwd) : undefined,
     ide,
     ignorePaths: Array.isArray(ignorePaths) ? ignorePaths : [ignorePaths],
+    mtimeDeep: (options.mtimeDeep || options.mtimeDeep === 0)
+      ? Number(options.mtimeDeep)
+      : DEFAULT_OPTIONS.mtimeDeep,
+    mtimeConcurrency: options.mtimeConcurrency
+      ? Number(options.mtimeConcurrency)
+      : DEFAULT_OPTIONS.mtimeConcurrency,
   } as Options
 }

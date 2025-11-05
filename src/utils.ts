@@ -13,7 +13,7 @@ export function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-export function normalizePath(path: string) {
+export function normalizePath(path: string): string {
   if (path.startsWith('file://')) {
     try {
       return fileURLToPath(path)
@@ -35,7 +35,7 @@ export async function hasSqlite3(): Promise<boolean> {
   }
 }
 
-export async function ensureSqlite3() {
+export async function ensureSqlite3(): Promise<void> {
   if (!await hasSqlite3()) {
     if (!isPackageExists('better-sqlite3')) {
       const spinner = p.spinner()
@@ -59,4 +59,16 @@ export function extractJSON(stdout: string): HistoryEntry[] | undefined {
   catch {
     // safe guard
   }
+}
+
+export function sortByMtime(data: HistoryEntry[]): HistoryEntry[] {
+  return data.sort((a, b) => {
+    if (a.mtime && b.mtime)
+      return b.mtime - a.mtime
+    if (a.mtime && !b.mtime)
+      return -1
+    if (!a.mtime && b.mtime)
+      return 1
+    return 0
+  })
 }
